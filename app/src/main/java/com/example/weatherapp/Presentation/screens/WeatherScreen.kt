@@ -77,13 +77,6 @@ fun WeatherScreen(
                 is WeatherUiState.Loading -> LoadingIndicator()
                 is WeatherUiState.Success -> {
                     val weather = (weatherState as WeatherUiState.Success).weather
-
-                    val date = remember(weather.timestamp) {
-                        val date = Date(weather.timestamp)
-                        val dateFormat = SimpleDateFormat("EEEE, d MMM", Locale.getDefault())
-                        dateFormat.format(date)
-                    }
-
                     DailyForecast(
                         forecast = weather.condition,
                         temperature = weather.temperature,

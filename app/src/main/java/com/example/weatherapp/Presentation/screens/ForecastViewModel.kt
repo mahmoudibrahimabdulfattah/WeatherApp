@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.Presentation.components.ForecastIntent
 import com.example.weatherapp.Presentation.components.ForecastState
 import com.example.weatherapp.UseCases.GetForecastUseCase
+import com.example.weatherapp.UseCases.SaveLastSearchedCityUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ForecastViewModel @Inject constructor(
-    private val getForecastUseCase: GetForecastUseCase
+    private val getForecastUseCase: GetForecastUseCase,
+    private val saveLastSearchedCityUseCase: SaveLastSearchedCityUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ForecastState())
@@ -26,7 +28,7 @@ class ForecastViewModel @Inject constructor(
         }
     }
 
-    private fun loadForecast(cityName: String) {
+    private fun loadForecast(cityName: String = saveLastSearchedCityUseCase.toString()) {
         viewModelScope.launch {
             _state.value = state.value.copy(isLoading = true)
             getForecastUseCase(cityName)
