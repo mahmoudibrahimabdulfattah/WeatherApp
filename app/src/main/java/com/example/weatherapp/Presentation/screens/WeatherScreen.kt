@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,6 +50,7 @@ fun WeatherScreen(
     val forecastState by forecastViewModel.state.collectAsState()
 
     var cityName by remember { mutableStateOf("") }
+
     var fDate by remember { mutableStateOf("") }
 
     Scaffold(
@@ -92,15 +94,15 @@ fun WeatherScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            when {
-                forecastState.isLoading -> LoadingIndicator()
-                forecastState.error != null -> ErrorMessage(message = forecastState.error!!)
-                forecastState.forecast.isNotEmpty() -> {
-                    fDate = formatDate(forecastState.forecast.map { it.toForecastItem() }[0].date)
-                    WeeklyForecast(
-                        data = forecastState.forecast.map { it.toForecastItem() }
-                    )
-                }
+            if (forecastState.isLoading) {
+                LoadingIndicator()
+            } else if (forecastState.error != null) {
+                ErrorMessage(message = forecastState.error!!)
+            } else if (forecastState.forecast.isNotEmpty()) {
+                fDate = formatDate(forecastState.forecast.first().toForecastItem().date)
+                WeeklyForecast(
+                    data = forecastState.forecast.map { it.toForecastItem() }
+                )
             }
         }
     }

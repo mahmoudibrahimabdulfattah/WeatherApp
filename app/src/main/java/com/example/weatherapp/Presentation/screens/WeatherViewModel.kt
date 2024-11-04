@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.Presentation.components.WeatherUiState
 import com.example.weatherapp.UseCases.GetCurrentWeatherUseCase
 import com.example.weatherapp.UseCases.GetLastSearchedCityUseCase
-import com.example.weatherapp.UseCases.SaveLastSearchedCityUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,8 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
     private val getCurrentWeatherUseCase: GetCurrentWeatherUseCase,
-    private val getLastSearchedCityUseCase: GetLastSearchedCityUseCase,
-    private val saveLastSearchedCityUseCase: SaveLastSearchedCityUseCase
+    private val getLastSearchedCityUseCase: GetLastSearchedCityUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<WeatherUiState>(WeatherUiState.Initial)
@@ -25,19 +23,18 @@ class WeatherViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getLastSearchedCityUseCase()?.let { cityName ->
-                fetchWeather(cityName)
-            }
+            val cityName = getLastSearchedCityUseCase() ?: "New York"
+            fetchWeather(cityName)
         }
     }
 
-    fun fetchWeather(cityName: String = saveLastSearchedCityUseCase.toString()) {
+    fun fetchWeather(cityName: String) {
         viewModelScope.launch {
             _uiState.value = WeatherUiState.Loading
             getCurrentWeatherUseCase(cityName)
                 .onSuccess { weather ->
                     _uiState.value = WeatherUiState.Success(weather)
-                    saveLastSearchedCityUseCase(cityName)
+                    getLastSearchedCityUseCase.toString()
                 }
                 .onFailure { error ->
                     _uiState.value = WeatherUiState.Error(error.message ?: "Unknown error")
