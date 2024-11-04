@@ -1,4 +1,4 @@
-package com.example.weatherapp.ui.screens.components
+package com.example.weatherapp.Presentation.components
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
@@ -30,16 +30,16 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.weatherapp.ui.screens.util.ForecastData
-import com.example.weatherapp.ui.screens.util.ForecastItem
-import com.example.weatherapp.ui.screens.util.fromHex
-import com.example.weatherapp.ui.theme.ColorGradient1
-import com.example.weatherapp.ui.theme.ColorGradient2
-import com.example.weatherapp.ui.theme.ColorGradient3
-import com.example.weatherapp.ui.theme.ColorTextPrimary
-import com.example.weatherapp.ui.theme.ColorTextPrimaryVariant
-import com.example.weatherapp.ui.theme.ColorTextSecondary
-import com.example.weatherapp.ui.theme.ColorTextSecondaryVariant
+import com.example.weatherapp.Presentation.components.util.ForecastData
+import com.example.weatherapp.Presentation.components.util.ForecastItem
+import com.example.weatherapp.Presentation.components.util.fromHex
+import com.example.weatherapp.Presentation.theme.ColorGradient1
+import com.example.weatherapp.Presentation.theme.ColorGradient2
+import com.example.weatherapp.Presentation.theme.ColorGradient3
+import com.example.weatherapp.Presentation.theme.ColorTextPrimary
+import com.example.weatherapp.Presentation.theme.ColorTextPrimaryVariant
+import com.example.weatherapp.Presentation.theme.ColorTextSecondary
+import com.example.weatherapp.Presentation.theme.ColorTextSecondaryVariant
 
 @Composable
 fun WeeklyForecast(
@@ -58,7 +58,7 @@ fun WeeklyForecast(
         ) {
             items(
                 items = data,
-                key = { it.dayOfWeek }
+                key = { item -> "${data.indexOf(item)}_${item.dayOfWeek}" }
             ) { item ->
                 Forecast(
                     item = item
@@ -93,6 +93,8 @@ private fun Forecast(
     modifier: Modifier = Modifier,
     item: ForecastItem
 ) {
+    val temperatureInCelsius = (item.temperature - 273.15).toInt()
+
     val updatedModifier = remember(item.isSelected) {
         if (item.isSelected) {
             modifier.background(
@@ -165,7 +167,7 @@ private fun Forecast(
             modifier = Modifier.height(6.dp)
         )
         Text(
-            text = item.temperature,
+            text = "$temperatureInCelsius°",
             letterSpacing = 0.sp,
             style = temperatureTextStyle,
         )

@@ -1,5 +1,7 @@
-package com.example.weatherapp.ui.screens
+package com.example.weatherapp.Presentation.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,11 +27,16 @@ import com.example.weatherapp.Presentation.components.ForecastIntent
 import com.example.weatherapp.Presentation.components.LoadingIndicator
 import com.example.weatherapp.Presentation.components.WeatherUiState
 import com.example.weatherapp.Presentation.components.WeeklyForecast
-import com.example.weatherapp.Presentation.screens.ForecastViewModel
-import com.example.weatherapp.Presentation.screens.WeatherViewModel
 import com.example.weatherapp.Presentation.theme.ColorBackground
 import com.example.weatherapp.Repository.toForecastItem
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WeatherScreen(
     weatherViewModel: WeatherViewModel = hiltViewModel(),
@@ -66,10 +73,17 @@ fun WeatherScreen(
                 is WeatherUiState.Loading -> LoadingIndicator()
                 is WeatherUiState.Success -> {
                     val weather = (weatherState as WeatherUiState.Success).weather
+
+                    val date = remember(weather.timestamp) {
+                        val date = Date(weather.timestamp)
+                        val dateFormat = SimpleDateFormat("EEEE, d MMM", Locale.getDefault())
+                        dateFormat.format(date)
+                    }
+
                     DailyForecast(
                         forecast = weather.condition,
                         temperature = weather.temperature,
-                        date = weather.timestamp.toString(),
+                        date = date,
                         feelsLike = weather.feelsLike
                     )
                 }
@@ -95,5 +109,5 @@ fun WeatherScreen(
 @Preview(showBackground = true)
 @Composable
 fun WeatherScreenPreview() {
-    WeatherScreen()
+
 }

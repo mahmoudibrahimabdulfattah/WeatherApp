@@ -1,4 +1,4 @@
-package com.example.weatherapp.ui.screens.components
+package com.example.weatherapp.Presentation.components
 
 import com.example.weatherapp.R
 import androidx.compose.foundation.Image
@@ -23,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -36,10 +37,15 @@ import com.example.weatherapp.Presentation.theme.ColorWindForecast
 
 @Composable
 fun DailyForecast(
-    modifier: Modifier = Modifier,
-    forecast: String = "Rain showers",
-    date: String = "Monday, 12 Feb"
+    forecast: String,
+    temperature: Double,
+    date: String,
+    feelsLike: Double,
+    modifier: Modifier = Modifier
 ) {
+    val temperatureInCelsius = (temperature - 273.15).toInt()
+    val feelsLike = (feelsLike - 273.15).toInt()
+
     ConstraintLayout(
         modifier = modifier.fillMaxWidth()
     ) {
@@ -94,6 +100,8 @@ fun DailyForecast(
         )
 
         ForecastValue(
+            degree = temperatureInCelsius.toString(),
+            feels_like = feelsLike.toString(),
             modifier = Modifier.constrainAs(forecastValue) {
                 end.linkTo(anchor = parent.end, margin = 24.dp)
                 top.linkTo(forecastImage.top)
@@ -111,6 +119,12 @@ fun DailyForecast(
             }
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DailyForecastPreview() {
+    DailyForecast("mm", 301.13, "4444",305.67)
 }
 
 @Composable
@@ -134,8 +148,8 @@ private fun CardBackground(
 @Composable
 private fun ForecastValue(
     modifier: Modifier = Modifier,
-    degree: String = "21",
-    description: String = "Feels like 26°"
+    degree: String,
+    feels_like: String
 ) {
     Column(
         modifier = modifier,
@@ -171,7 +185,7 @@ private fun ForecastValue(
             )
         }
         Text(
-            text = description,
+            text = "Feels like $feels_like",
             style = MaterialTheme.typography.bodyMedium,
             color = ColorTextSecondaryVariant
         )
@@ -200,5 +214,3 @@ private fun WindForecastImage(
         )
     }
 }
-
-
