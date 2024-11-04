@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.weatherapp.DataSource.Models.ForecastData
 import com.example.weatherapp.Presentation.components.ActionBar
 import com.example.weatherapp.Presentation.components.DailyForecast
 import com.example.weatherapp.Presentation.components.ErrorMessage
@@ -27,6 +28,8 @@ import com.example.weatherapp.Presentation.components.ForecastIntent
 import com.example.weatherapp.Presentation.components.LoadingIndicator
 import com.example.weatherapp.Presentation.components.WeatherUiState
 import com.example.weatherapp.Presentation.components.WeeklyForecast
+import com.example.weatherapp.Presentation.components.util.ForecastItem
+import com.example.weatherapp.Presentation.components.util.formatDate
 import com.example.weatherapp.Presentation.theme.ColorBackground
 import com.example.weatherapp.Repository.toForecastItem
 import java.text.SimpleDateFormat
@@ -46,6 +49,7 @@ fun WeatherScreen(
     val forecastState by forecastViewModel.state.collectAsState()
 
     var cityName by remember { mutableStateOf("") }
+    var fDate by remember { mutableStateOf("") }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -83,7 +87,7 @@ fun WeatherScreen(
                     DailyForecast(
                         forecast = weather.condition,
                         temperature = weather.temperature,
-                        date = date,
+                        date = fDate,
                         feelsLike = weather.feelsLike
                     )
                 }
@@ -98,9 +102,12 @@ fun WeatherScreen(
             when {
                 forecastState.isLoading -> LoadingIndicator()
                 forecastState.error != null -> ErrorMessage(message = forecastState.error!!)
-                forecastState.forecast.isNotEmpty() -> WeeklyForecast(
-                    data = forecastState.forecast.map { it.toForecastItem() }
-                )
+                forecastState.forecast.isNotEmpty() -> {
+                    fDate = formatDate(forecastState.forecast.map { it.toForecastItem() }[0].date)
+                    WeeklyForecast(
+                        data = forecastState.forecast.map { it.toForecastItem() }
+                    )
+                }
             }
         }
     }

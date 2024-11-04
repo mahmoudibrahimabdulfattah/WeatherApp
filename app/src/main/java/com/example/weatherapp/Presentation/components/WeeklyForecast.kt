@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.weatherapp.Presentation.components.util.ForecastData
 import com.example.weatherapp.Presentation.components.util.ForecastItem
+import com.example.weatherapp.Presentation.components.util.formatDayMonth
 import com.example.weatherapp.Presentation.components.util.fromHex
 import com.example.weatherapp.Presentation.theme.ColorGradient1
 import com.example.weatherapp.Presentation.theme.ColorGradient2
@@ -40,6 +41,7 @@ import com.example.weatherapp.Presentation.theme.ColorTextPrimary
 import com.example.weatherapp.Presentation.theme.ColorTextPrimaryVariant
 import com.example.weatherapp.Presentation.theme.ColorTextSecondary
 import com.example.weatherapp.Presentation.theme.ColorTextSecondaryVariant
+import java.util.UUID
 
 @Composable
 fun WeeklyForecast(
@@ -57,8 +59,8 @@ fun WeeklyForecast(
             horizontalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             items(
-                items = data,
-                key = { item -> "${data.indexOf(item)}_${item.dayOfWeek}" }
+                items = data.distinctBy { it.date },
+                key = { UUID.randomUUID().toString() }
             ) { item ->
                 Forecast(
                     item = item
@@ -152,7 +154,7 @@ private fun Forecast(
             color = primaryTextColor
         )
         Text(
-            text = item.date,
+            text = formatDayMonth(item.date),
             style = MaterialTheme.typography.labelMedium,
             color = secondaryTextColor,
             fontWeight = FontWeight.Normal

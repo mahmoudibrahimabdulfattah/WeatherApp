@@ -2,6 +2,7 @@ package com.example.weatherapp.Presentation.components.util
 
 import com.example.weatherapp.R
 import androidx.annotation.DrawableRes
+import java.util.UUID
 
 data class ForecastItem(
     @DrawableRes val image: Int,
