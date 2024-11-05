@@ -1,6 +1,8 @@
 package com.example.weatherapp.Presentation.components
 
+import android.os.Build
 import androidx.annotation.DrawableRes
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -44,6 +46,7 @@ import com.example.weatherapp.Presentation.theme.ColorTextSecondaryVariant
 import com.example.weatherapp.R
 import java.util.UUID
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WeeklyForecast(
     modifier: Modifier = Modifier,
@@ -119,6 +122,7 @@ private fun WeatherForecastHeader(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun Forecast(
     modifier: Modifier = Modifier,
@@ -127,7 +131,19 @@ private fun Forecast(
 ) {
     val temperatureInCelsius = (item.temperature - 273.15).toInt()
 
-    val updatedModifier = if (item.isSelected) {
+    // Get current date from device
+    val currentDate = remember {
+        java.time.LocalDate.now()
+    }
+
+    // Convert item.date to LocalDate for comparison
+    val itemDate = remember(item.date) {
+        java.time.LocalDate.parse(item.date)
+    }
+
+    val isCurrentDate = currentDate == itemDate
+
+    val updatedModifier = if (isCurrentDate) {
         modifier.background(
             shape = RoundedCornerShape(percent = 50),
             brush = Brush.linearGradient(
@@ -140,11 +156,11 @@ private fun Forecast(
         modifier
     }
 
-    val primaryTextColor = if (item.isSelected) ColorTextSecondary else ColorTextPrimary
+    val primaryTextColor = if (isCurrentDate) ColorTextSecondary else ColorTextPrimary
 
-    val secondaryTextColor = if (item.isSelected) ColorTextSecondaryVariant else ColorTextPrimaryVariant
+    val secondaryTextColor = if (isCurrentDate) ColorTextSecondaryVariant else ColorTextPrimaryVariant
 
-    val temperatureTextStyle = if (item.isSelected) {
+    val temperatureTextStyle = if (isCurrentDate) {
         TextStyle(
             brush = Brush.verticalGradient(
                 0f to Color.White,
@@ -206,26 +222,6 @@ private fun Forecast(
         AirQualityIndicator(
             value = item.airQuality,
             color = item.airQualityIndicatorColorHex
-        )
-    }
-}
-
-@Composable
-private fun WeatherImage(
-    modifier: Modifier = Modifier,
-    @DrawableRes image: Int
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(60.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            painter = painterResource(image),
-            contentDescription = null,
-            contentScale = ContentScale.FillWidth,
-            modifier = Modifier.fillMaxWidth()
         )
     }
 }
