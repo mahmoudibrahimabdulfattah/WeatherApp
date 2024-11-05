@@ -5,6 +5,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,11 +40,14 @@ import com.example.weatherapp.Presentation.components.util.fromHex
 import com.example.weatherapp.Presentation.theme.ColorGradient1
 import com.example.weatherapp.Presentation.theme.ColorGradient2
 import com.example.weatherapp.Presentation.theme.ColorGradient3
-import com.example.weatherapp.Presentation.theme.ColorTextPrimary
+import com.example.weatherapp.Presentation.theme.LightTextPrimary
 import com.example.weatherapp.Presentation.theme.ColorTextPrimaryVariant
-import com.example.weatherapp.Presentation.theme.ColorTextSecondary
+import com.example.weatherapp.Presentation.theme.LightTextSecondary
 import com.example.weatherapp.Presentation.theme.ColorTextSecondaryVariant
+import com.example.weatherapp.Presentation.theme.DarkTextPrimary
+import com.example.weatherapp.Presentation.theme.DarkTextSecondary
 import com.example.weatherapp.R
+import java.time.LocalDate
 import java.util.UUID
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -106,6 +110,8 @@ fun WeatherIcon(weatherCondition: String) {
 private fun WeatherForecastHeader(
     modifier: Modifier = Modifier
 ) {
+    val primaryTextColor = if (isSystemInDarkTheme()) LightTextPrimary else DarkTextPrimary
+
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -114,7 +120,7 @@ private fun WeatherForecastHeader(
         Text(
             text = "7-day forecast",
             style = MaterialTheme.typography.titleLarge,
-            color = ColorTextPrimary,
+            color = primaryTextColor,
             fontWeight = FontWeight.Bold,
             fontSize = 20.sp
         )
@@ -124,24 +130,18 @@ private fun WeatherForecastHeader(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-private fun Forecast(
+fun Forecast(
     modifier: Modifier = Modifier,
     item: ForecastItem,
     condition: String
 ) {
     val temperatureInCelsius = (item.temperature - 273.15).toInt()
 
-    // Get current date from device
-    val currentDate = remember {
-        java.time.LocalDate.now()
-    }
-
-    // Convert item.date to LocalDate for comparison
-    val itemDate = remember(item.date) {
-        java.time.LocalDate.parse(item.date)
-    }
-
+    val currentDate = remember { LocalDate.now() }
+    val itemDate = remember(item.date) { LocalDate.parse(item.date) }
     val isCurrentDate = currentDate == itemDate
+
+    val primaryTextColor = if (isCurrentDate) LightTextSecondary else if (isSystemInDarkTheme()) LightTextPrimary else DarkTextPrimary
 
     val updatedModifier = if (isCurrentDate) {
         modifier.background(
@@ -156,10 +156,6 @@ private fun Forecast(
         modifier
     }
 
-    val primaryTextColor = if (isCurrentDate) ColorTextSecondary else ColorTextPrimary
-
-    val secondaryTextColor = if (isCurrentDate) ColorTextSecondaryVariant else ColorTextPrimaryVariant
-
     val temperatureTextStyle = if (isCurrentDate) {
         TextStyle(
             brush = Brush.verticalGradient(
@@ -171,7 +167,7 @@ private fun Forecast(
         )
     } else {
         TextStyle(
-            color = ColorTextPrimary,
+            color = if (isSystemInDarkTheme()) LightTextPrimary else DarkTextPrimary,
             fontSize = 24.sp,
             fontWeight = FontWeight.Black
         )
@@ -194,7 +190,7 @@ private fun Forecast(
         Text(
             text = formatDayMonth(item.date),
             style = MaterialTheme.typography.labelMedium,
-            color = secondaryTextColor,
+            color = DarkTextSecondary,
             fontWeight = FontWeight.Normal
         )
         Spacer(
@@ -235,7 +231,7 @@ private fun AirQualityIndicator(
     Surface(
         modifier = modifier,
         color = Color.fromHex(color),
-        contentColor = ColorTextSecondary,
+        contentColor = LightTextSecondary,
         shape = RoundedCornerShape(8.dp)
     ) {
         Box(

@@ -31,7 +31,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.example.weatherapp.Presentation.theme.ColorGradient1
 import com.example.weatherapp.Presentation.theme.ColorGradient2
 import com.example.weatherapp.Presentation.theme.ColorGradient3
-import com.example.weatherapp.Presentation.theme.ColorTextSecondary
+import com.example.weatherapp.Presentation.theme.LightTextSecondary
 import com.example.weatherapp.Presentation.theme.ColorTextSecondaryVariant
 import com.example.weatherapp.Presentation.theme.ColorWindForecast
 
@@ -89,7 +89,7 @@ fun DailyForecast(
         Text(
             text = forecast,
             style = MaterialTheme.typography.titleLarge,
-            color = ColorTextSecondary,
+            color = LightTextSecondary,
             fontWeight = FontWeight.Medium,
             modifier = Modifier.constrainAs(title) {
                 start.linkTo(anchor = parent.start, margin = 24.dp)

@@ -3,6 +3,7 @@ package com.example.weatherapp.Presentation.components
 import com.example.weatherapp.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,8 +32,9 @@ import androidx.compose.ui.unit.dp
 import com.example.weatherapp.Presentation.theme.ColorGradient1
 import com.example.weatherapp.Presentation.theme.ColorGradient2
 import com.example.weatherapp.Presentation.theme.ColorGradient3
-import com.example.weatherapp.Presentation.theme.ColorTextPrimary
-import com.example.weatherapp.Presentation.theme.ColorTextSecondary
+import com.example.weatherapp.Presentation.theme.DarkTextPrimary
+import com.example.weatherapp.Presentation.theme.LightTextPrimary
+import com.example.weatherapp.Presentation.theme.LightTextSecondary
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,6 +45,8 @@ fun ActionBar(
     onSearchClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val primaryTextColor = if (isSystemInDarkTheme()) LightTextPrimary else DarkTextPrimary
+
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -54,15 +58,18 @@ fun ActionBar(
             placeholder = { Text("Enter city name") },
             modifier = Modifier.weight(1f),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedTextColor = ColorTextPrimary,
-                cursorColor = ColorTextPrimary
+                focusedTextColor = primaryTextColor,
+                cursorColor = primaryTextColor
             )
         )
 
         Spacer(modifier = Modifier.width(8.dp))
 
         Button(onClick = onSearchClick) {
-            Text("Search")
+            Text(
+                text = "Search",
+                color = primaryTextColor
+            )
         }
     }
 }
@@ -96,7 +103,7 @@ private fun LocationInfo(
             Text(
                 text = location,
                 style = MaterialTheme.typography.titleLarge,
-                color = ColorTextPrimary,
+                color = LightTextPrimary,
                 fontWeight = FontWeight.Bold
             )
         }
@@ -126,7 +133,7 @@ private fun ProgressBar(
         Text(
             text = "Change City",
             style = MaterialTheme.typography.labelSmall,
-            color = ColorTextSecondary.copy(alpha = 0.7f)
+            color = LightTextSecondary.copy(alpha = 0.7f)
         )
     }
 }

@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.weatherapp.Presentation.theme.ColorTextPrimary
+import com.example.weatherapp.Presentation.theme.LightTextPrimary
 
 @Composable
 fun ErrorMessage(message: String) {
@@ -21,7 +21,7 @@ fun ErrorMessage(message: String) {
     ) {
         Text(
             text = message,
-            color = ColorTextPrimary,
+            color = LightTextPrimary,
             textAlign = TextAlign.Center
         )
     }

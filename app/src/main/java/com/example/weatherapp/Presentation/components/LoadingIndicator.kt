@@ -6,7 +6,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.example.weatherapp.Presentation.theme.ColorTextPrimary
+import com.example.weatherapp.Presentation.theme.LightTextPrimary
 
 @Composable
 fun LoadingIndicator() {
@@ -14,6 +14,6 @@ fun LoadingIndicator() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator(color = ColorTextPrimary)
+        CircularProgressIndicator(color = LightTextPrimary)
     }
 }
