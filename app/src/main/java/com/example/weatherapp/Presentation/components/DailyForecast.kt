@@ -41,6 +41,7 @@ fun DailyForecast(
     temperature: Double,
     date: String,
     feelsLike: Double,
+    weatherCondition: String,
     modifier: Modifier = Modifier
 ) {
     val temperatureInCelsius = (temperature - 273.15).toInt()
@@ -64,8 +65,17 @@ fun DailyForecast(
             }
         )
 
+        val iconRes = when (weatherCondition.lowercase()) {
+            "clear sky", "sunny" -> R.drawable.img_sun
+            "rain", "light rain", "moderate rain", "rain showers" -> R.drawable.img_rain
+            "clouds", "few clouds", "scattered clouds", "cloudy" -> R.drawable.img_clouds
+            "thunderstorm", "thunder" -> R.drawable.img_thunder
+            "snow" -> R.drawable.img_rain
+            else -> R.drawable.img_cloudy
+        }
+
         Image(
-            painter = painterResource(R.drawable.img_sub_rain),
+            painter = painterResource(id= iconRes),
             contentDescription = null,
             contentScale = ContentScale.FillHeight,
             modifier = Modifier
@@ -124,7 +134,7 @@ fun DailyForecast(
 @Preview(showBackground = true)
 @Composable
 fun DailyForecastPreview() {
-    DailyForecast("mm", 301.13, "4444",305.67)
+    DailyForecast("mm", 301.13, "4444",305.67, "Sunny")
 }
 
 @Composable

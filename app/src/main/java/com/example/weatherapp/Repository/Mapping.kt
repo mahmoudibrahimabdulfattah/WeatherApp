@@ -2,7 +2,9 @@ package com.example.weatherapp.Repository
 
 import com.example.weatherapp.DataSource.Models.Forecast
 import com.example.weatherapp.DataSource.Models.ForecastResponse
+import com.example.weatherapp.DataSource.Models.MainWeather
 import com.example.weatherapp.DataSource.Models.Weather
+import com.example.weatherapp.DataSource.Models.WeatherInfo
 import com.example.weatherapp.DataSource.Models.WeatherResponse
 import com.example.weatherapp.Presentation.components.util.ForecastItem
 import com.example.weatherapp.Presentation.components.util.calculateAirQuality
@@ -15,7 +17,7 @@ fun WeatherResponse.toWeather(): Weather {
         cityName = this.name,
         temperature = this.main.temp,
         condition = this.weather.firstOrNull()?.description ?: "",
-        timestamp = this.weather.firstOrNull()?.timestamp ?: 0L,
+        timestamp = this.dt ,
         icon = this.weather.firstOrNull()?.icon ?: "",
         feelsLike = this.main.feels_like,
     )
@@ -43,6 +45,33 @@ fun Forecast.toForecastItem(): ForecastItem {
         airQuality = this.airQuality.toString(),
         airQualityIndicatorColorHex = getAirQualityColor(this.airQuality), // implement this function
         isSelected = false // يمكنك تعديل هذا حسب احتياجك
+    )
+}
+
+fun WeatherResponse.toMainWeather(): MainWeather {
+    return MainWeather(
+        // Map the appropriate fields from the API response
+        // Example:
+        pressure = main.pressure,
+        humidity = main.humidity,
+        temp = main.temp,
+        feels_like = main.feels_like,
+        temp_min = main.temp_min,
+        temp_max = main.temp_max,
+        sea_level = main.sea_level,
+        grnd_level = main.grnd_level,
+        temp_kf = main.temp_kf
+    )
+}
+
+fun WeatherResponse.toWeatherInfo(): WeatherInfo {
+    return WeatherInfo(
+        // Map the appropriate fields from the API response
+        // Example:
+        description = weather.firstOrNull()?.description ?: "",
+        icon = weather.firstOrNull()?.icon ?: "",
+        id = weather.firstOrNull()?.id ?: 1,
+        main = weather.firstOrNull()?.main.toString(),
     )
 }
 

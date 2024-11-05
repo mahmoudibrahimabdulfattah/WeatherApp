@@ -41,12 +41,14 @@ import com.example.weatherapp.Presentation.theme.ColorTextPrimary
 import com.example.weatherapp.Presentation.theme.ColorTextPrimaryVariant
 import com.example.weatherapp.Presentation.theme.ColorTextSecondary
 import com.example.weatherapp.Presentation.theme.ColorTextSecondaryVariant
+import com.example.weatherapp.R
 import java.util.UUID
 
 @Composable
 fun WeeklyForecast(
     modifier: Modifier = Modifier,
-    data: List<ForecastItem> = ForecastData
+    data: List<ForecastItem> = ForecastData,
+    condition: String
 ) {
     Column(
         modifier = modifier,
@@ -59,14 +61,41 @@ fun WeeklyForecast(
             horizontalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             items(
-                items = data.distinctBy { it.date },
+                items = data.take(7),
                 key = { UUID.randomUUID().toString() }
             ) { item ->
                 Forecast(
-                    item = item
+                    item = item,
+                    condition = condition
                 )
             }
         }
+    }
+}
+
+@Composable
+fun WeatherIcon(weatherCondition: String) {
+    val iconRes = when (weatherCondition.lowercase()) {
+        "clear sky", "sunny" -> R.drawable.img_sun
+        "rain", "light rain", "moderate rain", "rain showers" -> R.drawable.img_rain
+        "clouds", "few clouds", "scattered clouds", "cloudy" -> R.drawable.img_clouds
+        "thunderstorm", "thunder" -> R.drawable.img_thunder
+        "snow" -> R.drawable.img_rain
+        else -> R.drawable.img_cloudy
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(id = iconRes),
+            contentDescription = null,
+            contentScale = ContentScale.FillWidth,
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
 
@@ -93,50 +122,43 @@ private fun WeatherForecastHeader(
 @Composable
 private fun Forecast(
     modifier: Modifier = Modifier,
-    item: ForecastItem
+    item: ForecastItem,
+    condition: String
 ) {
     val temperatureInCelsius = (item.temperature - 273.15).toInt()
 
-    val updatedModifier = remember(item.isSelected) {
-        if (item.isSelected) {
-            modifier.background(
-                shape = RoundedCornerShape(percent = 50),
-                brush = Brush.linearGradient(
-                    0f to ColorGradient1,
-                    0.5f to ColorGradient2,
-                    1f to ColorGradient3
-                )
+    val updatedModifier = if (item.isSelected) {
+        modifier.background(
+            shape = RoundedCornerShape(percent = 50),
+            brush = Brush.linearGradient(
+                0f to ColorGradient1,
+                0.5f to ColorGradient2,
+                1f to ColorGradient3
             )
-        } else {
-            modifier
-        }
+        )
+    } else {
+        modifier
     }
 
-    val primaryTextColor = remember(item.isSelected) {
-        if (item.isSelected) ColorTextSecondary else ColorTextPrimary
-    }
+    val primaryTextColor = if (item.isSelected) ColorTextSecondary else ColorTextPrimary
 
-    val secondaryTextColor = remember(item.isSelected) {
-        if (item.isSelected) ColorTextSecondaryVariant else ColorTextPrimaryVariant
-    }
+    val secondaryTextColor = if (item.isSelected) ColorTextSecondaryVariant else ColorTextPrimaryVariant
 
-    val temperatureTextStyle = remember(item.isSelected) {
-        if (item.isSelected) {
-            TextStyle(
-                brush = Brush.verticalGradient(
-                    0f to Color.White,
-                    1f to Color.White.copy(alpha = 0.3f)
-                ),
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Black
-            )
-        } else {
-            TextStyle(
-                color = ColorTextPrimary,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Black
-            )
-        }
+    val temperatureTextStyle = if (item.isSelected) {
+        TextStyle(
+            brush = Brush.verticalGradient(
+                0f to Color.White,
+                1f to Color.White.copy(alpha = 0.3f)
+            ),
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Black
+        )
+    } else {
+        TextStyle(
+            color = ColorTextPrimary,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Black
+        )
     }
 
     Column(
@@ -162,9 +184,14 @@ private fun Forecast(
         Spacer(
             modifier = Modifier.height(8.dp)
         )
-        WeatherImage(
-            image = item.image
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(60.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            WeatherIcon(weatherCondition = condition)
+        }
         Spacer(
             modifier = Modifier.height(6.dp)
         )

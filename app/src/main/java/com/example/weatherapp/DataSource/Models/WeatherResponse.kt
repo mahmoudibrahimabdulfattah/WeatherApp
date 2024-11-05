@@ -1,8 +1,9 @@
 package com.example.weatherapp.DataSource.Models
 
 data class WeatherResponse(
-    val name: String,
+    val dt: Long,
     val main: MainWeather,
-    val weather: List<WeatherInfo>
+    val weather: List<WeatherInfo>,
+    val name: String
 )
 

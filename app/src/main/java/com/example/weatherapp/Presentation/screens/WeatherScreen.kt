@@ -11,7 +11,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.weatherapp.DataSource.Models.ForecastData
 import com.example.weatherapp.Presentation.components.ActionBar
 import com.example.weatherapp.Presentation.components.DailyForecast
 import com.example.weatherapp.Presentation.components.ErrorMessage
@@ -29,16 +27,9 @@ import com.example.weatherapp.Presentation.components.ForecastIntent
 import com.example.weatherapp.Presentation.components.LoadingIndicator
 import com.example.weatherapp.Presentation.components.WeatherUiState
 import com.example.weatherapp.Presentation.components.WeeklyForecast
-import com.example.weatherapp.Presentation.components.util.ForecastItem
 import com.example.weatherapp.Presentation.components.util.formatDate
 import com.example.weatherapp.Presentation.theme.ColorBackground
 import com.example.weatherapp.Repository.toForecastItem
-import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.Date
-import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -52,6 +43,7 @@ fun WeatherScreen(
     var cityName by remember { mutableStateOf("") }
 
     var fDate by remember { mutableStateOf("") }
+    var weatherCondition by remember { mutableStateOf("") }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -78,12 +70,15 @@ fun WeatherScreen(
             when (weatherState) {
                 is WeatherUiState.Loading -> LoadingIndicator()
                 is WeatherUiState.Success -> {
-                    val weather = (weatherState as WeatherUiState.Success).weather
+                    val weatherMain = (weatherState as WeatherUiState.Success).weatherMain
+                    val weatherInfo = (weatherState as WeatherUiState.Success).weatherInfo
+                    weatherCondition = weatherInfo.main
                     DailyForecast(
-                        forecast = weather.condition,
-                        temperature = weather.temperature,
+                        forecast = weatherInfo.description,
+                        temperature = weatherMain.temp,
                         date = fDate,
-                        feelsLike = weather.feelsLike
+                        weatherCondition = weatherCondition,
+                        feelsLike = weatherMain.feels_like
                     )
                 }
                 is WeatherUiState.Error -> ErrorMessage(
@@ -101,7 +96,8 @@ fun WeatherScreen(
             } else if (forecastState.forecast.isNotEmpty()) {
                 fDate = formatDate(forecastState.forecast.first().toForecastItem().date)
                 WeeklyForecast(
-                    data = forecastState.forecast.map { it.toForecastItem() }
+                    data = forecastState.forecast.distinctBy { it.date}.map { it.toForecastItem() },
+                    condition = weatherCondition,
                 )
             }
         }

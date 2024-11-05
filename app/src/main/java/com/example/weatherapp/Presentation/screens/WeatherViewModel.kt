@@ -23,7 +23,7 @@ class WeatherViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val cityName = getLastSearchedCityUseCase() ?: "New York"
+            val cityName = getLastSearchedCityUseCase() ?: "Cairo"
             fetchWeather(cityName)
         }
     }
@@ -32,9 +32,11 @@ class WeatherViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = WeatherUiState.Loading
             getCurrentWeatherUseCase(cityName)
-                .onSuccess { weather ->
-                    _uiState.value = WeatherUiState.Success(weather)
-                    getLastSearchedCityUseCase.toString()
+                .onSuccess { result ->
+                    _uiState.value = WeatherUiState.Success(
+                        weatherMain = result.mainWeather,
+                        weatherInfo = result.weatherInfo
+                    )
                 }
                 .onFailure { error ->
                     _uiState.value = WeatherUiState.Error(error.message ?: "Unknown error")
