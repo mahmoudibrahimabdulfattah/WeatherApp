@@ -2,7 +2,7 @@
 
 A modern Android weather application built with best practices and latest technologies. The app provides current weather information and 7-day forecast for any city worldwide.
 
-![App Screenshot]
+<img src="https://github.com/mahmoudibrahimabdulfattah/WeatherApp/blob/main/app/src/main/res/drawable/WeatherAppLight.png" width="250"/>   <img src="https://github.com/mahmoudibrahimabdulfattah/WeatherApp/blob/main/app/src/main/res/drawable/WeatherAppLight2.png" width="250"/>   <img src="https://github.com/mahmoudibrahimabdulfattah/WeatherApp/blob/main/app/src/main/res/drawable/WeatherAppDark.png" width="250"/>
 
 ## Features ✨
 
