@@ -1,16 +1,15 @@
-# .github/workflows/android.yml
-name: Android CI
+name: Android CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ main ]
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
     steps:
       - uses: actions/checkout@v3
 
@@ -25,10 +24,17 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Lint
-        run: ./gradlew lint
+        run: ./gradlew lintDebug
 
       - name: Run Unit Tests
-        run: ./gradlew test
+        run: ./gradlew testDebugUnitTest
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-results
+          path: app/build/reports/tests/
 
       - name: Build Debug APK
         run: ./gradlew assembleDebug
@@ -38,11 +44,3 @@ jobs:
         with:
           name: app-debug
           path: app/build/outputs/apk/debug/app-debug.apk
-
-      - name: Upload Test Results
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-results
-          path: |
-            **/build/reports/tests/
-            **/build/reports/lint-results-debug.html
